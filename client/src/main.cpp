@@ -24,8 +24,7 @@ void* reciever(void*) {
 
     for (int i = 0; i < attempts; i++) {
         ssize_t recvfrom_code = recvfrom(sock_fd, (void*) serverReply, (size_t) (MAX_STRING_LENGTH + 1), MSG_WAITALL, (struct sockaddr *) &server, (socklen_t*) &len);
-        if (recvfrom_code == -1)
-        {
+        if (recvfrom_code == -1) {
             std::cerr << "recvfrom error\n"; 
             continue;
         }
@@ -59,7 +58,7 @@ int main(int argc, char *argv[])
     } else if (argc == 5) {
         interval_duration = strtoll(argv[3], nullptr, 10);
         attempts = std::atoi(argv[4]);
-    } else if (argc > 5) {
+    } else {
         std::cerr << "socket creation failed\n"; 
         std::exit(1); 
     }
@@ -75,11 +74,10 @@ int main(int argc, char *argv[])
     server.sin_addr.s_addr = inet_addr(ip);
   
     int len = 0;
-
-    int tid=0;
-    if (pthread_create((pthread_t*) &tid, NULL, reciever, NULL)==-1)
-    {
-        perror("pthread_create error");
+    int tid = 0;
+    auto pthread_create_code = pthread_create((pthread_t*) &tid, NULL, reciever, NULL);
+    if (pthread_create_code == -1) {
+        std::cerr << "pthread_create failed\n"; 
         close(sock_fd);
         exit(-1);
     }
@@ -87,11 +85,10 @@ int main(int argc, char *argv[])
     for (int i = 0; i < attempts; i++) {
         auto start = std::chrono::high_resolution_clock::now();
         auto duration_start = std::chrono::duration_cast<std::chrono::nanoseconds>(start - global_start).count();
-        auto messageBuffer = std::to_string(duration_start).c_str();
+        auto message_buffer = std::to_string(duration_start).c_str();
 
-        ssize_t sendto_code = sendto(sock_fd, (void*) messageBuffer, (size_t) strlen(messageBuffer) + 1, 0, (struct sockaddr *) &server, sizeof(server));
-        if (sendto_code == -1)
-        {
+        ssize_t sendto_code = sendto(sock_fd, (void*) message_buffer, (size_t) strlen(message_buffer) + 1, 0, (struct sockaddr *) &server, sizeof(server));
+        if (sendto_code == -1) {
             std::cerr << "sendto error\n"; 
             close(sock_fd);
             exit(1);
@@ -102,5 +99,6 @@ int main(int argc, char *argv[])
         }
     }
 
+    // Wait for reciever thread end
     while (true) {}
 }
