@@ -37,6 +37,7 @@ int main(int argc, char *argv[]) {
     char messageBuffer[MAX_STRING_LENGTH + 1];
 
     std::cout << "Listening from port " << port << std::endl;
+    int counter = 0;
 
     while (true) {
         int len = sizeof(client);
@@ -52,7 +53,9 @@ int main(int argc, char *argv[]) {
         {
             std::cerr << "sendto error\n"; 
             continue;
-        } 
+        }
+
+        std::cout << counter++ << ") Recieved message from " << inet_ntoa(client.sin_addr) << ": " << messageBuffer << std::endl;
     }
 
     close(sock_fd);
