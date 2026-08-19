@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
         exit(-1);
     }
   
-    int ip = std::atoi(argv[1]);
+    char* ip = argv[1];
     int port = std::atoi(argv[2]);
     if (argc == 3) {
         interval_duration = -1;
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
     server.sin_family = AF_INET;
     server.sin_port = htons(port);
-    server.sin_addr.s_addr = INADDR_ANY;
+    server.sin_addr.s_addr = inet_addr(ip);
   
     int len = 0;
 
