@@ -30,7 +30,7 @@ void* reciever(void*) {
         }
 
         auto finish = std::chrono::high_resolution_clock::now();
-        auto duration_finish = std::chrono::duration_cast<std::chrono::nanoseconds>(finish - global_start).count();
+        auto duration_finish = std::chrono::duration_cast<std::chrono::microseconds>(finish - global_start).count();
         auto duration_start = strtoll(serverReply, nullptr, 10);
         auto duration = duration_finish - duration_start;
         std::cout<< interval_duration << "," << duration << "\n";
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < attempts; i++) {
         auto start = std::chrono::high_resolution_clock::now();
-        auto duration_start = std::chrono::duration_cast<std::chrono::nanoseconds>(start - global_start).count();
+        auto duration_start = std::chrono::duration_cast<std::chrono::microseconds>(start - global_start).count();
         auto message_buffer = std::to_string(duration_start).c_str();
 
         ssize_t sendto_code = sendto(sock_fd, (void*) message_buffer, (size_t) strlen(message_buffer) + 1, 0, (struct sockaddr *) &server, sizeof(server));
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
         } 
 
         if (interval_duration > 0) {
-            std::this_thread::sleep_for(std::chrono::nanoseconds(interval_duration));
+            std::this_thread::sleep_for(std::chrono::microseconds(interval_duration));
         }
     }
 
